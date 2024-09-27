@@ -1,0 +1,21 @@
+createNote:
+  handler: src/notes/createNote/handler.default
+  iamRoleStatements:
+    - Effect: Allow
+      Action: dynamodb:BatchWriteItem
+      Resource:
+        Fn::GetAtt:
+          - NotesTable
+          - Arn
+  environment:
+    TABLE_NAME:
+      Ref: NotesTable
+  events:
+    - http:
+        method: post
+        path: /v1/notes
+        authorizer:
+          name: COGNITO_AUTHORIZER
+          type: COGNITO_USER_POOLS
+          authorizerId:
+            Ref: ApiGatewayCognitoAuthorizer
